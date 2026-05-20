@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maeve的待办清单</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 48px 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+      background: #ffffff;
+      border: 1px solid #dbe3ef;
+      border-radius: 8px;
+      padding: 28px;
+      box-shadow: 0 18px 45px rgba(31, 41, 55, 0.10);
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .todo-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    #todoInput {
+      flex: 1;
+      min-width: 0;
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    #todoInput:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+
+    button {
+      border: 0;
+      border-radius: 6px;
+      padding: 0 18px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 4px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 16px;
+    }
+
+    li:last-child {
+      border-bottom: 0;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .todo-text {
+      flex: 1;
+      word-break: break-word;
+    }
+
+    li.completed .todo-text {
+      color: #94a3b8;
+      text-decoration: line-through;
+    }
+
+    .empty {
+      color: #64748b;
+      text-align: center;
+      padding: 18px 0 4px;
+    }
+
+    @media (max-width: 480px) {
+      .app {
+        padding: 22px;
+      }
+
+      .todo-form {
+        flex-direction: column;
+      }
+
+      button {
+        height: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>Maeve的待办清单</h1>
+
+    <form class="todo-form" id="todoForm">
+      <input id="todoInput" type="text" placeholder="输入新的待办事项" autocomplete="off">
+      <button type="submit">添加</button>
+    </form>
+
+    <ul id="todoList"></ul>
+    <p class="empty" id="emptyMessage">还没有待办事项</p>
+  </main>
+
+  <script>
+    const form = document.getElementById('todoForm');
+    const input = document.getElementById('todoInput');
+    const list = document.getElementById('todoList');
+    const emptyMessage = document.getElementById('emptyMessage');
+
+    function updateEmptyMessage() {
+      emptyMessage.style.display = list.children.length === 0 ? 'block' : 'none';
+    }
+
+    function addTodo(text) {
+      const item = document.createElement('li');
+      const checkbox = document.createElement('input');
+      const todoText = document.createElement('span');
+
+      checkbox.type = 'checkbox';
+      todoText.className = 'todo-text';
+      todoText.textContent = text;
+
+      checkbox.addEventListener('change', () => {
+        item.classList.toggle('completed', checkbox.checked);
+      });
+
+      item.appendChild(checkbox);
+      item.appendChild(todoText);
+      list.appendChild(item);
+      updateEmptyMessage();
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const text = input.value.trim();
+      if (text === '') {
+        input.focus();
+        return;
+      }
+
+      addTodo(text);
+      input.value = '';
+      input.focus();
+    });
+
+    updateEmptyMessage();
+  </script>
+</body>
+</html>
