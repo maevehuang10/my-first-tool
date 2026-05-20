@@ -148,22 +148,44 @@
     const input = document.getElementById('todoInput');
     const list = document.getElementById('todoList');
     const emptyMessage = document.getElementById('emptyMessage');
+    const storageKey = 'maeveTodoList';
 
     function updateEmptyMessage() {
       emptyMessage.style.display = list.children.length === 0 ? 'block' : 'none';
     }
 
-    function addTodo(text) {
+    function saveTodos() {
+      const todos = Array.from(list.children).map((item) => {
+        return {
+          text: item.querySelector('.todo-text').textContent,
+          completed: item.querySelector('input[type="checkbox"]').checked
+        };
+      });
+
+      localStorage.setItem(storageKey, JSON.stringify(todos));
+    }
+
+    function loadTodos() {
+      const savedTodos = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      savedTodos.forEach((todo) => {
+        addTodo(todo.text, todo.completed);
+      });
+    }
+
+    function addTodo(text, completed = false) {
       const item = document.createElement('li');
       const checkbox = document.createElement('input');
       const todoText = document.createElement('span');
 
       checkbox.type = 'checkbox';
+      checkbox.checked = completed;
       todoText.className = 'todo-text';
       todoText.textContent = text;
+      item.classList.toggle('completed', completed);
 
       checkbox.addEventListener('change', () => {
         item.classList.toggle('completed', checkbox.checked);
+        saveTodos();
       });
 
       item.appendChild(checkbox);
@@ -182,10 +204,12 @@
       }
 
       addTodo(text);
+      saveTodos();
       input.value = '';
       input.focus();
     });
 
+    loadTodos();
     updateEmptyMessage();
   </script>
 </body>
